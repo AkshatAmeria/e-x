@@ -7,7 +7,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import aj from "@/lib/arcjet";
 import { request } from "@arcjet/next";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI("AIzaSyAjE9UGFV5hQFT2B0f9A1f25L10zViI8MY");
 
 const serializeAmount = (obj) => ({
   ...obj,
@@ -227,15 +227,177 @@ export async function getUserTransactions(query = {}) {
   }
 }
 
+// ... (imports and existing code)
+
+  // const handleReceiptScan = async (file) => {
+  //   if (file.size > 5 * 1024 * 1024) {
+  //     toast.error("File size should be less than 5MB");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+
+  //   await scanReceiptFn(formData);
+  // };
+
+// ... (rest of the component)
 // Scan Receipt
-export async function scanReceipt(file) {
+// export async function scanReceipt(file) {
+//   try {
+//     const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+
+//     // Convert File to ArrayBuffer
+//     const arrayBuffer = await file.arrayBuffer();
+//     // Convert ArrayBuffer to Base64
+//     const base64String = Buffer.from(arrayBuffer).toString("base64");
+
+//     const prompt = `
+//       Analyze this receipt image and extract the following information in JSON format:
+//       - Total amount (just the number)
+//       - Date (in ISO format)
+//       - Description or items purchased (brief summary)
+//       - Merchant/store name
+//       - Suggested category (one of: housing,transportation,groceries,utilities,entertainment,food,shopping,healthcare,education,personal,travel,insurance,gifts,bills,other-expense )
+      
+//       Only respond with valid JSON in this exact format:
+//       {
+//         "amount": number,
+//         "date": "ISO date string",
+//         "description": "string",
+//         "merchantName": "string",
+//         "category": "string"
+//       }
+
+//       If its not a recipt, return an empty object
+//     `;
+
+//     const result = await model.generateContent([
+//       {
+//         inlineData: {
+//           data: base64String,
+//           mimeType: file.type,
+//         },
+//       },
+//       prompt,
+//     ]);
+
+//     const response = await result.response;
+//     const text = response.text();
+//     const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
+
+//     try {
+//       const data = JSON.parse(cleanedText);
+//       return {
+//         amount: parseFloat(data.amount),
+//         date: new Date(data.date),
+//         description: data.description,
+//         category: data.category,
+//         merchantName: data.merchantName,
+//       };
+//     } catch (parseError) {
+//       console.error("Error parsing JSON response:", parseError);
+//       throw new Error("Invalid response format from Gemini");
+//     }
+//   } catch (error) {
+//     console.error("Error scanning receipt:", error);
+//     throw new Error("Failed to scan receipt");
+//   }
+// }
+
+// ... (imports and existing code)
+
+// Scan Receipt
+// export async function scanReceipt(formData) {
+//   try {
+//     const file = formData.get("file");
+
+//     if (!file) {
+//       throw new Error("No file uploaded.");
+//     }
+
+//     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+
+//     // Convert File to ArrayBuffer
+//     const arrayBuffer = await file.arrayBuffer();
+//     // Convert ArrayBuffer to Base64
+//     const base64String = Buffer.from(arrayBuffer).toString("base64");
+
+//     const prompt = `
+//       Analyze this receipt image and extract the following information in JSON format:
+//       - Total amount (just the number)
+//       - Date (in ISO format)
+//       - Description or items purchased (brief summary)
+//       - Merchant/store name
+//       - Suggested category (one of: housing,transportation,groceries,utilities,entertainment,food,shopping,healthcare,education,personal,travel,insurance,gifts,bills,other-expense )
+      
+//       Only respond with valid JSON in this exact format:
+//       {
+//         "amount": number,
+//         "date": "ISO date string",
+//         "description": "string",
+//         "merchantName": "string",
+//         "category": "string"
+//       }
+
+//       If its not a recipt, return an empty object
+//     `;
+
+//     const result = await model.generateContent([
+//       {
+//         inlineData: {
+//           data: base64String,
+//           mimeType: file.type,
+//         },
+//       },
+//       prompt,
+//     ]);
+
+//     const response = await result.response;
+//     const text = response.text();
+//     const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
+
+//     try {
+//       const data = JSON.parse(cleanedText);
+//       return {
+//         amount: parseFloat(data.amount),
+//         date: new Date(data.date),
+//         description: data.description,
+//         category: data.category,
+//         merchantName: data.merchantName,
+//       };
+//     } catch (parseError) {
+//       console.error("Error parsing JSON response:", parseError);
+//       throw new Error("Invalid response format from Gemini");
+//     }
+//   } catch (error) {
+//     console.error("Error scanning receipt:", error);
+//     throw new Error("Failed to scan receipt");
+//   }
+// }
+
+// ... (rest of the file)
+
+// actions/transaction.js
+
+// ... (other code)
+
+// Scan Receipt
+export async function scanReceipt(formData) { // <-- MUST accept formData
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const file = formData.get("file"); // <-- MUST get the file from formData
+
+    if (!file) {
+      throw new Error("No file uploaded.");
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
     // Convert File to ArrayBuffer
     const arrayBuffer = await file.arrayBuffer();
     // Convert ArrayBuffer to Base64
     const base64String = Buffer.from(arrayBuffer).toString("base64");
+    console.log("Base64 String:", base64String.substring(0, 30) + "..."); // Log part of the base64 string for verification
 
     const prompt = `
       Analyze this receipt image and extract the following information in JSON format:
@@ -257,6 +419,7 @@ export async function scanReceipt(file) {
       If its not a recipt, return an empty object
     `;
 
+    // ... (rest of the function is correct)
     const result = await model.generateContent([
       {
         inlineData: {
@@ -288,7 +451,16 @@ export async function scanReceipt(file) {
     console.error("Error scanning receipt:", error);
     throw new Error("Failed to scan receipt");
   }
+  console.log("scanReceipt called with:", formData);
+
 }
+
+// ... (other code)
+
+
+
+
+
 
 // Helper function to calculate next recurring date
 function calculateNextRecurringDate(startDate, interval) {

@@ -95,7 +95,7 @@ export default function Home() {
 <section className=" w-full">
 <div className="text-center">
   <div className="mt-10">
-  <h3 className="text-3xl font-bold text-center mb-5 next-title ">Let's make your x positive for exponential growth</h3>
+  <h3 className="text-3xl font-bold text-center mb-5 next-title ">Lets make your x positive for exponential growth</h3>
   </div>
   <div className="mt-2 ">
   <p className="text-sm text-center font-semibold text-white">Join thousands of users who are already managing their finances smater with e^x</p>
